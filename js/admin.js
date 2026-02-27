@@ -17,31 +17,142 @@
   }
 
   function renderPending() {
-    const list = window.noshahiStore.getCustomListings().filter((p) => p.status === "pending");
+    const listings = window.noshahiStore.getCustomListings().filter((p) => p.status === "pending");
+    const agents = window.noshahiStore.getUsers().filter((u) => u.role === "agent" && u.status === "pending");
 
-    pendingTable.innerHTML = list.length
-      ? list
-        .map(
-          (p) => `<div class="p-3 bg-light rounded-3 d-flex justify-content-between align-items-center mb-2 shadow-sm">
+    let html = "";
+
+    // Render Agents first as they are high priority
+    agents.forEach(a => {
+      html += `
+        <div class="p-4 bg-white border border-primary border-opacity-25 rounded-3 mb-4 shadow-sm">
+          <div class="d-flex justify-content-between align-items-start mb-3">
             <div>
-              <p class="fw-bold mb-0">${p.title}</p>
-              <small class="text-muted"><i class="fa-solid fa-location-dot me-1"></i>${p.city}</small>
+              <span class="badge bg-primary mb-2 px-3 py-2 rounded-pill">New Agent Registration</span>
+              <h4 class="mb-1 fw-bold">${a.name}</h4>
+              <p class="text-muted small mb-0"><i class="fa-solid fa-envelope me-2"></i>${a.email}</p>
+              <p class="text-muted small mb-0"><i class="fa-solid fa-phone me-2"></i>${a.phone}</p>
             </div>
-            <div class="actions d-flex gap-2">
-              <button class="btn btn-success btn-sm ok" data-id="${p.id}"><i class="fa-solid fa-check me-1"></i>Approve</button>
-              <button class="btn btn-danger btn-sm hold" data-id="${p.id}"><i class="fa-solid fa-xmark me-1"></i>Reject</button>
+            <div class="text-end">
+              <span class="badge bg-light text-dark border mb-1">${a.experience} Years Exp</span>
+              <br>
+              <span class="badge bg-light text-dark border">${a.specialty} Specialist</span>
             </div>
-          </div>`
-        )
-        .join("")
-      : "<p class='text-muted italic p-3'>No pending approvals in the queue.</p>";
+          </div>
+          <div class="bg-light p-3 rounded-3 mb-3 border-start border-primary border-4">
+             <div class="row g-2">
+                <div class="col-6">
+                  <small class="text-muted d-block">Agency</small>
+                  <span class="fw-bold">${a.agency}</span>
+                </div>
+                <div class="col-6 text-end">
+                  <small class="text-muted d-block">Operating City</small>
+                  <span class="fw-bold">${a.city}</span>
+                </div>
+             </div>
+          </div>
+          <div class="d-flex gap-2">
+            <button class="btn btn-success w-100 py-2 fw-bold approve-agent" data-email="${a.email}"><i class="fa-solid fa-check me-2"></i>Verify & Approve Agent</button>
+            <button class="btn btn-outline-danger py-2" title="Reject"><i class="fa-solid fa-trash"></i></button>
+          </div>
+        </div>`;
+    });
 
-    pendingTable.querySelectorAll("button[data-id]").forEach((btn) => {
+    listings.forEach(p => {
+      html += `
+        <div class="p-3 bg-light rounded-3 d-flex justify-content-between align-items-center mb-2 shadow-sm">
+          <div>
+            <span class="badge bg-secondary mb-1">Property Listing</span>
+            <p class="fw-bold mb-0">${p.title}</p>
+            <small class="text-muted"><i class="fa-solid fa-location-dot me-1"></i>${p.city}</small>
+          </div>
+          <div class="actions d-flex gap-2">
+            <button class="btn btn-success btn-sm ok" data-id="${p.id}"><i class="fa-solid fa-check me-1"></i>Approve</button>
+            <button class="btn btn-danger btn-sm hold" data-id="${p.id}"><i class="fa-solid fa-xmark me-1"></i>Reject</button>
+          </div>
+        </div>`;
+    });
+
+    if (!html) html = "<p class='text-muted italic p-3 text-center'>No pending approvals in the queue.</p>";
+
+    pendingTable.innerHTML = html;
+    const modalQueue = document.getElementById("modalListingsQueue");
+    if (modalQueue) modalQueue.innerHTML = html;
+
+    // Listeners for listings
+    document.querySelectorAll("button[data-id]").forEach((btn) => {
       btn.addEventListener("click", () => {
         const status = btn.classList.contains("ok") ? "approved" : "rejected";
         setStatus(Number(btn.dataset.id), status);
       });
     });
+
+    // Listeners for agent verification
+    document.querySelectorAll(".approve-agent").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const email = btn.dataset.email;
+        const users = window.noshahiStore.getUsers();
+        const user = users.find(u => u.email === email);
+        if (user) {
+          user.status = 'approved';
+          window.noshahiStore.updateUser(user);
+          window.noshahiAlert("Agent Verified", `${user.name} can now list properties.`, "success");
+          renderPending();
+          renderApprovedAgents();
+        }
+      });
+    });
+  }
+
+  function renderApprovedAgents() {
+    const directory = document.getElementById("agentDirectory");
+    if (!directory) return;
+
+    const agents = window.noshahiStore.getUsers().filter(u => u.role === 'agent' && u.status === 'approved');
+
+    directory.innerHTML = agents.length
+      ? agents.map(a => {
+        // Prepare the info HTML string for the alert
+        const infoHtml = `
+          <div class='text-start mt-2'>
+            <div class='d-flex justify-content-between mb-2 border-bottom pb-2'>
+              <span class='text-muted small'>Phone</span>
+              <span class='fw-bold text-dark'>${a.phone}</span>
+            </div>
+            <div class='d-flex justify-content-between mb-2 border-bottom pb-2'>
+              <span class='text-muted small'>Experience</span>
+              <span class='fw-bold text-dark'>${a.experience} Years</span>
+            </div>
+            <div class='d-flex justify-content-between'>
+              <span class='text-muted small'>Specialty</span>
+              <span class='fw-bold text-dark'>${a.specialty}</span>
+            </div>
+          </div>
+        `.replace(/\s+/g, ' ').trim().replace(/'/g, "\\'");
+
+        return `
+        <div class="col-md-4">
+          <div class="p-3 bg-white border rounded-4 shadow-sm h-100 transition-up">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <h6 class="fw-bold mb-0 text-dark">${a.name}</h6>
+              <span class="badge bg-success-subtle text-success border-0 rounded-pill px-3">Verified</span>
+            </div>
+            <div class="mb-3">
+              <p class="small text-muted mb-1"><i class="fa-solid fa-building me-2"></i>${a.agency}</p>
+              <p class="small text-muted mb-0"><i class="fa-solid fa-location-dot me-2"></i>${a.city}</p>
+            </div>
+            <div class="d-flex gap-2">
+               <button class="btn btn-sm btn-light border w-100 fw-bold py-2" onclick="window.noshahiAlert('Partner Profile', '${infoHtml}', 'info')">
+                 <i class="fa-solid fa-eye me-2"></i>Details
+               </button>
+               <a href="tel:${a.phone}" class="btn btn-sm btn-primary px-3 py-2">
+                 <i class="fa-solid fa-phone"></i>
+               </a>
+            </div>
+          </div>
+        </div>`;
+      }).join("")
+      : "<div class='col-12 py-5 text-center text-muted border border-dashed rounded-4 bg-light'>No verified partners in the directory yet.</div>";
   }
 
   function renderStats() {
@@ -52,5 +163,6 @@
   locations.innerHTML = window.noshahiData.cities.map((c) => `<div class="city-card">${c}</div>`).join("");
 
   renderPending();
+  renderApprovedAgents();
   renderStats();
 })();

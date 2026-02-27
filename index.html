@@ -1,5 +1,6 @@
 ﻿<!doctype html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -11,12 +12,14 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link rel="stylesheet" href="style.css" />
 </head>
+
 <body>
   <header class="topbar">
     <nav class="navbar navbar-expand-lg">
       <div class="container-fluid px-0">
         <a class="navbar-brand brand" href="index.html">NOSHAHI <span>HOMES</span></a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar" aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation">
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar"
+          aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation">
           <i class="fa-solid fa-bars-staggered"></i>
         </button>
         <div class="collapse navbar-collapse" id="mainNavbar">
@@ -25,7 +28,8 @@
             <li class="nav-item"><a class="nav-link" href="#search">Explore</a></li>
             <li class="nav-item"><a class="nav-link" href="#projects">Projects</a></li>
             <li class="nav-item"><a class="nav-link" href="#blogs">Insights</a></li>
-            <li class="nav-item ms-lg-3"><a class="btn btn-outline-primary nav-link px-3" href="user-panel.html">Portal</a></li>
+            <li class="nav-item ms-lg-3"><a class="btn btn-outline-primary nav-link px-3"
+                href="user-panel.html">Portal</a></li>
           </ul>
         </div>
       </div>
@@ -34,8 +38,8 @@
 
   <section class="hero">
     <div class="container">
-      <h1>Find Your Dream Home <br>in Pakistan</h1>
-      <p>Discover verified properties, trusted agents, and premium investment opportunities with Karachi's premier property portal.</p>
+      <h1>Find Your Dream Home</h1>
+      <p>verified properties and premium investment opportunities in Pakistan.</p>
 
       <form id="search" class="hero-search row g-3">
         <div class="col-12 col-md-4 col-lg-3">
@@ -43,14 +47,17 @@
           <div class="suggest-wrap city-search-wrap">
             <div class="input-group">
               <input id="city" class="form-control" autocomplete="off" placeholder="Search City..." />
-              <button type="button" id="cityToggle" class="btn btn-light" aria-label="Toggle city list"><i class="fa-solid fa-chevron-down"></i></button>
+              <button type="button" id="cityToggle" class="btn btn-light" aria-label="Toggle city list"><i
+                  class="fa-solid fa-chevron-down"></i></button>
             </div>
             <div id="cityOptions" class="suggestions list-group"></div>
           </div>
         </div>
         <div class="col-12 col-md-4 col-lg-2">
           <label for="area" class="form-label mb-2"><i class="fa-solid fa-map me-2"></i>Area</label>
-          <select id="area" class="form-select border-0 shadow-none"><option value="">All Areas</option></select>
+          <select id="area" class="form-select border-0 shadow-none">
+            <option value="">All Areas</option>
+          </select>
         </div>
         <div class="col-12 col-md-4 col-lg-2">
           <label for="type" class="form-label mb-2"><i class="fa-solid fa-house-chimney me-2"></i>Type</label>
@@ -63,20 +70,21 @@
           </select>
         </div>
         <div class="col-12 col-md-6 col-lg-3">
-          <label class="form-label mb-2"><i class="fa-solid fa-money-bill-wave me-2"></i>Price Range</label>
-          <div class="row g-2">
-            <div class="col-6">
-              <input id="priceMin" class="form-control border-0 shadow-none" type="number" placeholder="Min" />
-            </div>
-            <div class="col-6">
-              <input id="priceMax" class="form-control border-0 shadow-none" type="number" placeholder="Max" />
-            </div>
-          </div>
+          <label for="price" class="form-label mb-2"><i class="fa-solid fa-money-bill-wave me-2"></i>Budget
+            Range</label>
+          <input id="price" class="form-control border-0 shadow-none" type="number" placeholder="Max Budget (PKR)" />
         </div>
         <div class="col-12 col-md-6 col-lg-2 d-grid align-items-end">
           <button type="submit" class="btn btn-success shadow-sm">Search Now</button>
         </div>
       </form>
+
+      <div id="map-section" class="mt-4 collapse">
+        <div class="panel p-0 overflow-hidden shadow-lg border-0" style="border-radius: 20px;">
+          <iframe id="google-map" width="100%" height="300" style="border:0;" allowfullscreen="" loading="lazy"
+            referrerpolicy="no-referrer-when-downgrade" src=""></iframe>
+        </div>
+      </div>
     </div>
   </section>
 
@@ -142,4 +150,5 @@
   <script src="js/main.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
+
 </html>

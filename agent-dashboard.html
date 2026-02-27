@@ -14,6 +14,12 @@
 </head>
 
 <body>
+  <script>
+    // Session Protection
+    const user = JSON.parse(localStorage.getItem("noshahi_session") || "null");
+    if (!user || user.role !== 'agent') window.location.href = 'login.html';
+  </script>
+
   <header class="topbar">
     <nav class="navbar navbar-expand-lg">
       <div class="container-fluid px-0">
@@ -23,11 +29,15 @@
           <i class="fa-solid fa-bars-staggered"></i>
         </button>
         <div class="collapse navbar-collapse" id="agentNavbar">
-          <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+          <ul class="navbar-nav ms-auto mb-2 mb-lg-0 align-items-center">
             <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
             <li class="nav-item"><a class="nav-link" href="user-panel.html">Portal</a></li>
-            <li class="nav-item"><a class="nav-link active" href="agent-dashboard.html">Agent Dash</a></li>
+            <li class="nav-item"><a class="nav-link active me-3" href="agent-dashboard.html">Agent Dash</a></li>
             <li class="nav-item"><a class="nav-link" href="admin-panel.html">Admin Panel</a></li>
+            <li class="nav-item">
+              <button class="btn btn-sm btn-outline-danger rounded-pill px-3"
+                onclick="noshahiStore.logout()">Logout</button>
+            </li>
           </ul>
         </div>
       </div>
@@ -35,11 +45,39 @@
   </header>
 
   <main class="container">
+    <div class="row g-4 mb-5">
+      <div class="col-12">
+        <section class="panel bg-primary text-white border-0">
+          <div class="row text-center g-4">
+            <div class="col-md-3 border-end border-white border-opacity-10">
+              <p class="small opacity-75 mb-1">Active Listings</p>
+              <h2 class="mb-0 fw-bold" id="statActive">0</h2>
+            </div>
+            <div class="col-md-3 border-end border-white border-opacity-10">
+              <p class="small opacity-75 mb-1">Total Views</p>
+              <h2 class="mb-0 fw-bold" id="statViews">0</h2>
+            </div>
+            <div class="col-md-3 border-end border-white border-opacity-10">
+              <p class="small opacity-75 mb-1">Inquiries</p>
+              <h2 class="mb-0 fw-bold" id="statLeads">0</h2>
+            </div>
+            <div class="col-md-3">
+              <p class="small opacity-75 mb-1">Conversion</p>
+              <h2 class="mb-0 fw-bold" id="statConv">0%</h2>
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>
+
     <div class="row g-4">
       <div class="col-lg-7">
         <section class="panel">
-          <h2 class="mb-4"><i class="fa-solid fa-plus-circle me-2 text-primary"></i>List New Property</h2>
+          <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="h4 mb-0"><i class="fa-solid fa-plus-circle me-2 text-primary"></i>List New Property</h2>
+          </div>
           <form id="agentForm" class="row g-3">
+            <!-- Form fields remain the same -->
             <div class="col-12">
               <input required id="title" class="form-control" placeholder="Property Title (e.g. Modern 3-Bed Villa)" />
             </div>
@@ -47,8 +85,8 @@
               <div class="suggest-wrap">
                 <div class="input-group">
                   <input required id="city" class="form-control" autocomplete="off" placeholder="City" />
-                  <button type="button" id="cityToggle" class="btn btn-outline-secondary"
-                    aria-label="Toggle city list"><i class="fa-solid fa-chevron-down"></i></button>
+                  <button type="button" id="cityToggle" class="btn btn-outline-secondary"><i
+                      class="fa-solid fa-chevron-down"></i></button>
                 </div>
                 <div id="cityOptions" class="suggestions list-group"></div>
               </div>
@@ -87,7 +125,31 @@
             <div class="col-md-6">
               <input id="baths" type="number" class="form-control" min="0" placeholder="Baths" />
             </div>
-            <div class="col-12">
+            <div class="col-md-12">
+              <label class="form-label small fw-bold">Property Image</label>
+              <div class="d-flex gap-3 align-items-center">
+                <div id="image-preview-container"
+                  class="border rounded-3 bg-light d-flex align-items-center justify-content-center overflow-hidden"
+                  style="width: 80px; height: 80px;">
+                  <i class="fa-solid fa-camera text-muted opacity-50"></i>
+                </div>
+                <div class="flex-grow-1">
+                  <input type="file" id="image" class="form-control" accept="image/*" />
+                  <small class="text-muted">Select a photo from your PC (JPG, PNG)</small>
+                </div>
+              </div>
+            </div>
+            <div class="row g-3 mb-3 mt-1">
+              <div class="col-md-6">
+                <label class="form-label small fw-bold">Contact Phone</label>
+                <input required id="phone" type="tel" class="form-control" placeholder="03001234567" />
+              </div>
+              <div class="col-md-6">
+                <label class="form-label small fw-bold">WhatsApp (Optional)</label>
+                <input id="whatsapp" type="tel" class="form-control" placeholder="03001234567" />
+              </div>
+            </div>
+            <div class="col-12 mt-2">
               <div class="form-check form-switch p-3 bg-light rounded-3">
                 <input class="form-check-input ms-0 me-3" type="checkbox" role="switch" id="featured">
                 <label class="form-check-label fw-bold" for="featured">Premium Featured Listing (Boost
@@ -101,46 +163,72 @@
         </section>
 
         <section class="panel">
-          <h2 class="mb-4">Live Inventory</h2>
+          <h2 class="h4 mb-4"><i class="fa-solid fa-list-ul me-2 text-primary"></i>Live Inventory</h2>
           <div id="myListings" class="stack d-grid gap-3"></div>
         </section>
       </div>
 
       <div class="col-lg-5">
-        <section class="panel">
-          <h2 class="mb-4">Inbound Leads</h2>
-          <div id="leadList" class="list-group list-group-flush"></div>
-        </section>
-
-        <section class="panel bg-dark text-white border-0">
-          <h2 class="text-white mb-4">Performance Insights</h2>
-          <div class="row g-3">
-            <div class="col-6">
-              <div class="stat-card bg-secondary bg-opacity-10 border-0 text-white">
-                <p class="text-secondary small mb-1">Views</p>
-                <strong class="text-white">2.5k</strong>
-              </div>
-            </div>
-            <div class="col-6">
-              <div class="stat-card bg-secondary bg-opacity-10 border-0 text-white">
-                <p class="text-secondary small mb-1">Leads</p>
-                <strong class="text-white">112</strong>
-              </div>
-            </div>
-            <div class="col-12">
-              <div
-                class="stat-card bg-success bg-opacity-10 border-0 text-white d-flex justify-content-between align-items-center">
-                <div>
-                  <p class="text-secondary small mb-1">Avg. Conversion</p>
-                  <strong class="text-white">4.5%</strong>
-                </div>
-                <i class="fa-solid fa-chart-line text-success h2 mb-0"></i>
-              </div>
-            </div>
+        <section class="panel h-100">
+          <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="h4 mb-0"><i class="fa-solid fa-comment-dots me-2 text-primary"></i>Inbound Leads</h2>
+            <span id="leadCount" class="badge bg-primary rounded-pill">0</span>
           </div>
+          <div id="leadList" class="stack d-grid gap-2"></div>
         </section>
       </div>
     </div>
+  </main>
+
+  <!-- Edit Listing Modal -->
+  <div class="modal fade" id="editModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content border-0 shadow-lg mb-0" style="border-radius: 20px;">
+        <div class="modal-header border-0 pb-0 px-4 pt-4">
+          <h5 class="modal-title fw-bold">Edit Property Details</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body p-4">
+          <form id="editForm" class="row g-3">
+            <input type="hidden" id="editId">
+            <div class="col-12">
+              <input required id="editTitle" class="form-control" placeholder="Title" />
+            </div>
+            <div class="col-md-6">
+              <input required id="editPrice" type="number" class="form-control" placeholder="Price" />
+            </div>
+            <div class="col-md-6">
+              <select id="editType" class="form-select" required>
+                <option>House</option>
+                <option>Plot</option>
+                <option>Commercial</option>
+                <option>Apartment</option>
+              </select>
+            </div>
+            <div class="col-12">
+              <label class="form-label small text-muted">Property Image</label>
+              <div class="d-flex gap-3 align-items-center">
+                <img id="edit-image-preview" src="" class="border rounded-3 object-fit-cover d-none"
+                  style="width: 60px; height: 60px;">
+                <input type="file" id="editImage" class="form-control" accept="image/*" />
+              </div>
+            </div>
+            <div class="col-12">
+              <label class="form-label small text-muted">Status</label>
+              <select id="editStatus" class="form-select">
+                <option value="approved">Approved / Live</option>
+                <option value="pending">Pending Admin</option>
+                <option value="sold">Sold Out</option>
+              </select>
+            </div>
+            <div class="col-12 mt-4 d-grid">
+              <button class="btn btn-primary py-3 fw-bold rounded-pill" type="submit">Update Listing</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
   </main>
 
   <footer class="footer">

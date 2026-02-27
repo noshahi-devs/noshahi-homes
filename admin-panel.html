@@ -14,6 +14,12 @@
 </head>
 
 <body>
+  <script>
+    // Session Protection
+    const user = JSON.parse(localStorage.getItem("noshahi_session") || "null");
+    if (!user || user.role !== 'admin') window.location.href = 'login.html';
+  </script>
+
   <header class="topbar">
     <nav class="navbar navbar-expand-lg">
       <div class="container-fluid px-0">
@@ -23,11 +29,15 @@
           <i class="fa-solid fa-bars-staggered"></i>
         </button>
         <div class="collapse navbar-collapse" id="adminNavbar">
-          <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+          <ul class="navbar-nav ms-auto mb-2 mb-lg-0 align-items-center">
             <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
             <li class="nav-item"><a class="nav-link" href="user-panel.html">Portal</a></li>
             <li class="nav-item"><a class="nav-link" href="agent-dashboard.html">Agent Dash</a></li>
-            <li class="nav-item"><a class="nav-link active" href="admin-panel.html">Admin Panel</a></li>
+            <li class="nav-item"><a class="nav-link active me-3" href="admin-panel.html">Admin Panel</a></li>
+            <li class="nav-item">
+              <button class="btn btn-sm btn-outline-danger rounded-pill px-3"
+                onclick="noshahiStore.logout()">Logout</button>
+            </li>
           </ul>
         </div>
       </div>
@@ -64,10 +74,7 @@
     <div class="row g-4 mb-5">
       <div class="col-lg-8">
         <section class="panel h-100">
-          <div class="d-flex justify-content-between align-items-center mb-4">
-            <h2 class="h4 mb-0"><i class="fa-solid fa-clipboard-check me-2 text-primary"></i>Pending Approvals</h2>
-            <button class="btn btn-sm btn-outline-primary">View All Queues</button>
-          </div>
+          <h2 class="h4 mb-4"><i class="fa-solid fa-clipboard-check me-2 text-primary"></i>Pending Approvals</h2>
           <div id="pendingTable" class="stack d-grid gap-3"></div>
         </section>
       </div>
@@ -91,6 +98,14 @@
         </section>
       </div>
     </div>
+
+    <section class="panel mb-5">
+      <h2 class="h4 mb-4"><i class="fa-solid fa-user-check me-2 text-primary"></i>Verified Partners (Agent Directory)
+      </h2>
+      <div id="agentDirectory" class="row g-3">
+        <!-- Approved agents will be rendered here -->
+      </div>
+    </section>
 
     <section class="panel">
       <div class="row g-4">
@@ -125,6 +140,63 @@
       <p class="small text-muted mb-0">&copy; 2026 NOSHAHI HOMES. Internal Administration System.</p>
     </div>
   </footer>
+
+  <!-- Queues Modal -->
+  <div class="modal fade" id="queuesModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+      <div class="modal-content border-0 shadow-lg">
+        <div class="modal-header bg-primary text-white border-0">
+          <h5 class="modal-title"><i class="fa-solid fa-list-check me-2"></i>System Management Queues</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body p-0">
+          <div class="row g-0">
+            <div class="col-md-4 border-end bg-light p-3">
+              <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+                <button class="nav-link active mb-2" id="q-listings-tab" data-bs-toggle="pill"
+                  data-bs-target="#q-listings" type="button" role="tab"><i
+                    class="fa-solid fa-house me-2"></i>Listings</button>
+                <button class="nav-link mb-2" id="q-agents-tab" data-bs-toggle="pill" data-bs-target="#q-agents"
+                  type="button" role="tab"><i class="fa-solid fa-user-tie me-2"></i>Agents</button>
+                <button class="nav-link" id="q-reports-tab" data-bs-toggle="pill" data-bs-target="#q-reports"
+                  type="button" role="tab"><i class="fa-solid fa-triangle-exclamation me-2"></i>Fraud Reports</button>
+              </div>
+            </div>
+            <div class="col-md-8 p-4">
+              <div class="tab-content" id="v-pills-tabContent">
+                <div class="tab-pane fade show active" id="q-listings" role="tabpanel">
+                  <h6>Pending Property Index</h6>
+                  <p class="small text-muted mb-4">Review recently submitted listings for accuracy.</p>
+                  <div id="modalListingsQueue" class="stack d-grid gap-2"></div>
+                </div>
+                <div class="tab-pane fade" id="q-agents" role="tabpanel">
+                  <h6>Agent Verification Queue</h6>
+                  <p class="small text-muted mb-4">Validate professional licenses and identities.</p>
+                  <div id="modalAgentsQueue" class="stack d-grid gap-2">
+                    <div class="p-3 bg-light rounded-3 d-flex justify-content-between align-items-center mb-2">
+                      <div>
+                        <p class="fw-bold mb-0">Ahmed Ali</p>
+                        <small class="text-muted">License: RE-92384</small>
+                      </div>
+                      <button class="btn btn-primary btn-sm">Verify</button>
+                    </div>
+                  </div>
+                </div>
+                <div class="tab-pane fade" id="q-reports" role="tabpanel">
+                  <h6>User Safety Reports</h6>
+                  <p class="small text-muted mb-4">Investigate flagged content or behavior.</p>
+                  <div class="p-5 text-center">
+                    <i class="fa-solid fa-circle-check text-success fa-3x mb-3"></i>
+                    <p class="text-muted">No unresolved fraud reports.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <script src="js/data.js"></script>
   <script src="js/admin.js"></script>

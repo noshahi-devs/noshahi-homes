@@ -105,5 +105,130 @@ window.noshahiStore = {
   },
   allListings() {
     return [...window.noshahiData.properties, ...this.getCustomListings()];
+  },
+  getCart() {
+    try {
+      return JSON.parse(localStorage.getItem("noshahi_cart") || "[]");
+    } catch {
+      return [];
+    }
+  },
+  addToCart(id) {
+    const cart = this.getCart();
+    if (!cart.includes(id)) {
+      cart.push(id);
+      localStorage.setItem("noshahi_cart", JSON.stringify(cart));
+      return true;
+    }
+    return false;
+  },
+  clearCart() {
+    localStorage.removeItem("noshahi_cart");
+  },
+  // User & Auth Logic
+  getUsers() {
+    try {
+      return JSON.parse(localStorage.getItem("noshahi_users") || "[]");
+    } catch {
+      return [];
+    }
+  },
+  saveUser(user) {
+    const users = this.getUsers();
+    users.push(user);
+    localStorage.setItem("noshahi_users", JSON.stringify(users));
+  },
+  updateUser(updatedUser) {
+    const users = this.getUsers();
+    const idx = users.findIndex(u => u.email === updatedUser.email);
+    if (idx >= 0) {
+      users[idx] = updatedUser;
+      localStorage.setItem("noshahi_users", JSON.stringify(users));
+    }
+  },
+  getCurrentUser() {
+    try {
+      return JSON.parse(localStorage.getItem("noshahi_session") || "null");
+    } catch {
+      return null;
+    }
+  },
+  login(email, password) {
+    // Admin Hardcoded Check
+    if (email === "admin@noshahi.pk" && password === "admin123") {
+      const admin = { name: "System Admin", email, role: "admin" };
+      localStorage.setItem("noshahi_session", JSON.stringify(admin));
+      return { success: true, user: admin };
+    }
+
+    const users = this.getUsers();
+    const user = users.find(u => u.email === email && u.password === password);
+    if (user) {
+      localStorage.setItem("noshahi_session", JSON.stringify(user));
+      return { success: true, user };
+    }
+    return { success: false, message: "Invalid email or password" };
+  },
+  // Lead Management
+  getLeads() {
+    try {
+      return JSON.parse(localStorage.getItem("noshahi_leads") || "[]");
+    } catch {
+      return [];
+    }
+  },
+  saveLead(lead) {
+    const leads = this.getLeads();
+    leads.push({ id: Date.now(), timestamp: new Date().toISOString(), status: "new", ...lead });
+    localStorage.setItem("noshahi_leads", JSON.stringify(leads));
+  },
+  updateLead(updatedLead) {
+    const leads = this.getLeads();
+    const idx = leads.findIndex(l => l.id === updatedLead.id);
+    if (idx >= 0) {
+      leads[idx] = updatedLead;
+      localStorage.setItem("noshahi_leads", JSON.stringify(leads));
+    }
+  },
+  // View Tracking (Simulated)
+  incrementView(id) {
+    const views = JSON.parse(localStorage.getItem("noshahi_views") || "{}");
+    views[id] = (views[id] || 0) + 1;
+    localStorage.setItem("noshahi_views", JSON.stringify(views));
+  },
+  getViews(id) {
+    const views = JSON.parse(localStorage.getItem("noshahi_views") || "{}");
+    return views[id] || 0;
+  },
+  logout() {
+    localStorage.removeItem("noshahi_session");
+    window.location.href = "login.html";
   }
+};
+
+window.noshahiAlert = function (title, message, type = 'success') {
+  // Remove existing if any
+  const old = document.getElementById('noshahi-custom-alert');
+  if (old) old.remove();
+
+  let icon = 'fa-circle-exclamation text-warning';
+  if (type === 'success') icon = 'fa-circle-check text-success';
+  if (type === 'info') icon = 'fa-circle-info text-primary';
+
+  const alertHtml = `
+    <div id="noshahi-custom-alert" class="modal fade show" style="display: block; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); z-index: 1060;">
+      <div class="modal-dialog modal-dialog-centered" style="max-width: 400px;">
+        <div class="modal-content border-0 shadow-lg" style="border-radius: 20px;">
+          <div class="modal-body text-center p-5">
+            <i class="fa-solid ${icon} fa-4x mb-4"></i>
+            <h3 class="h4 mb-2 fw-bold text-dark">${title}</h3>
+            <p class="text-muted mb-4">${message}</p>
+            <button class="btn btn-primary w-100 py-3 rounded-pill fw-bold" onclick="document.getElementById('noshahi-custom-alert').remove()">Got it!</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+
+  document.body.insertAdjacentHTML('beforeend', alertHtml);
 };
