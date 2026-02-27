@@ -17,27 +17,30 @@
   }
 
   function renderPending() {
-    const pending = window.noshahiStore.getCustomListings().filter((x) => x.status === "pending");
+    const list = window.noshahiStore.getCustomListings().filter((p) => p.status === "pending");
 
-    pendingTable.innerHTML = pending.length
-      ? pending
-          .map(
-            (p) => `<div class="listing-row">
-      <div>
-        <strong>${p.title}</strong>
-        <p>${p.city} - ${p.area} | ${p.type} | PKR ${Number(p.price).toLocaleString("en-PK")}</p>
-      </div>
-      <div class="actions">
-        <button class="ok" data-id="${p.id}" data-status="approved">Approve</button>
-        <button class="hold" data-id="${p.id}" data-status="rejected">Reject</button>
-      </div>
-    </div>`
-          )
-          .join("")
-      : "<p>No pending listing request.</p>";
+    pendingTable.innerHTML = list.length
+      ? list
+        .map(
+          (p) => `<div class="p-3 bg-light rounded-3 d-flex justify-content-between align-items-center mb-2 shadow-sm">
+            <div>
+              <p class="fw-bold mb-0">${p.title}</p>
+              <small class="text-muted"><i class="fa-solid fa-location-dot me-1"></i>${p.city}</small>
+            </div>
+            <div class="actions d-flex gap-2">
+              <button class="btn btn-success btn-sm ok" data-id="${p.id}"><i class="fa-solid fa-check me-1"></i>Approve</button>
+              <button class="btn btn-danger btn-sm hold" data-id="${p.id}"><i class="fa-solid fa-xmark me-1"></i>Reject</button>
+            </div>
+          </div>`
+        )
+        .join("")
+      : "<p class='text-muted italic p-3'>No pending approvals in the queue.</p>";
 
     pendingTable.querySelectorAll("button[data-id]").forEach((btn) => {
-      btn.addEventListener("click", () => setStatus(Number(btn.dataset.id), btn.dataset.status));
+      btn.addEventListener("click", () => {
+        const status = btn.classList.contains("ok") ? "approved" : "rejected";
+        setStatus(Number(btn.dataset.id), status);
+      });
     });
   }
 

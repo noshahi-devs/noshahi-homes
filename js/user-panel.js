@@ -18,8 +18,12 @@
 
   document.querySelectorAll("[data-role]").forEach((btn) => {
     btn.addEventListener("click", () => {
-      document.querySelectorAll("[data-role]").forEach((b) => b.classList.remove("active"));
-      btn.classList.add("active");
+      document.querySelectorAll("[data-role]").forEach((b) => {
+        b.classList.remove("btn-primary", "active");
+        b.classList.add("btn-secondary");
+      });
+      btn.classList.remove("btn-secondary");
+      btn.classList.add("btn-primary", "active");
       renderRole(btn.dataset.role);
     });
   });

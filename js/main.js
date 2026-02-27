@@ -85,17 +85,29 @@
   }
 
   function renderListings(list) {
-    count.textContent = `${list.length} properties`;
+    if (!listingGrid) return;
+    count.textContent = `${list.length} units available`;
     listingGrid.innerHTML = list
       .map(
         (p) => `<article class="card">
-          <div class="thumb"></div>
+          <div class="thumb" style="background-image: url('https://images.unsplash.com/photo-1570129477492-45c003edd2be?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80')">
+            <div class="position-absolute top-0 end-0 p-3">
+              <span class="badge ${p.featured ? "badge-verified" : "bg-dark bg-opacity-50"} text-white shadow-sm">
+                ${p.featured ? '<i class="fa-solid fa-circle-check me-1"></i>Verified' : 'Standard'}
+              </span>
+            </div>
+          </div>
           <div class="content">
-            <span class="badge">${p.featured ? "Verified" : "Standard"}</span>
-            <h3>${p.title}</h3>
-            <p class="price">${money(p.price)}</p>
-            <div class="meta"><span>${p.city} - ${p.area}</span><span>${p.type}</span></div>
-            <div class="meta"><span>${p.intent}</span><span>${p.beds || 0} Bed | ${p.baths || 0} Bath</span></div>
+            <h3 class="h5 mb-1 text-truncate">${p.title}</h3>
+            <p class="text-muted small mb-2"><i class="fa-solid fa-location-dot me-1"></i>${p.city}, ${p.area}</p>
+            <p class="price mb-3">${money(p.price)}</p>
+            <div class="d-flex justify-content-between border-top pt-3">
+              <div class="d-flex gap-3 text-muted small">
+                <span><i class="fa-solid fa-bed me-1"></i>${p.beds || 0}</span>
+                <span><i class="fa-solid fa-bath me-1"></i>${p.baths || 0}</span>
+              </div>
+              <span class="text-primary fw-bold small text-uppercase">${p.intent}</span>
+            </div>
           </div>
         </article>`
       )
@@ -103,14 +115,39 @@
   }
 
   function renderStatic() {
-    projectsGrid.innerHTML = data.projects
-      .map((p) => `<article class="card"><div class="content"><h3>${p.name}</h3><p>${p.city}</p><span class="badge">${p.units} Units</span></div></article>`)
-      .join("");
+    if (projectsGrid) {
+      projectsGrid.innerHTML = data.projects
+        .map((p) => `<article class="card">
+          <div class="thumb" style="background-image: url('https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80')"></div>
+          <div class="content">
+            <h3 class="h5 mb-1">${p.name}</h3>
+            <p class="text-muted small mb-2"><i class="fa-solid fa-location-dot me-1"></i>${p.city}</p>
+            <span class="badge badge-verified">${p.units} Premium Units</span>
+          </div>
+        </article>`)
+        .join("");
+    }
 
-    cityGrid.innerHTML = data.cities.slice(0, 12).map((c) => `<div class="city-card">${c}</div>`).join("");
-    blogGrid.innerHTML = data.blogs
-      .map((b) => `<article class="card"><div class="content"><h3>${b.title}</h3><p>${b.author}</p></div></article>`)
-      .join("");
+    if (cityGrid) {
+      cityGrid.innerHTML = data.cities.slice(0, 8).map((c) => `
+        <div class="card p-3 text-center shadow-sm hover-up border-0 bg-white clickable">
+          <h4 class="h6 mb-0">${c}</h4>
+          <p class="text-muted small mb-0">Explore Listings</p>
+        </div>
+      `).join("");
+    }
+
+    if (blogGrid) {
+      blogGrid.innerHTML = data.blogs
+        .map((b) => `<article class="card">
+          <div class="content">
+            <h3 class="h5 mb-2">${b.title}</h3>
+            <p class="text-muted small mb-0"><i class="fa-solid fa-user-pen me-2"></i>${b.author}</p>
+            <a href="#" class="btn btn-link px-0 text-primary fw-bold mt-2 text-decoration-none">Read Full Insight <i class="fa-solid fa-arrow-right ms-1"></i></a>
+          </div>
+        </article>`)
+        .join("");
+    }
   }
 
   form.addEventListener("submit", (e) => {
@@ -121,8 +158,7 @@
       type: document.getElementById("type").value,
       intent: document.getElementById("intent").value,
       min: Number(document.getElementById("priceMin").value || 0),
-      max: Number(document.getElementById("priceMax").value || Number.MAX_SAFE_INTEGER),
-      beds: Number(document.getElementById("beds").value || 0)
+      max: Number(document.getElementById("priceMax").value || Number.MAX_SAFE_INTEGER)
     };
 
     const filtered = store
@@ -132,8 +168,7 @@
       .filter((p) => !f.area || p.area === f.area)
       .filter((p) => !f.type || p.type === f.type)
       .filter((p) => !f.intent || p.intent === f.intent)
-      .filter((p) => p.price >= f.min && p.price <= f.max)
-      .filter((p) => !f.beds || (p.beds || 0) >= f.beds);
+      .filter((p) => p.price >= f.min && p.price <= f.max);
 
     renderListings(filtered);
   });

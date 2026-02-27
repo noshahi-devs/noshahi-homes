@@ -82,14 +82,17 @@
     const list = window.noshahiStore.getCustomListings();
     myListings.innerHTML = list.length
       ? list
-          .map(
-            (p) => `<div class="listing-row">
-        <span>${p.title} - PKR ${Number(p.price).toLocaleString("en-PK")}</span>
-        <span class="badge ${p.status === "pending" ? "pending" : ""}">${p.status}</span>
-      </div>`
-          )
-          .join("")
-      : "<p>No custom listing yet.</p>";
+        .map(
+          (p) => `<div class="p-3 bg-light rounded-3 d-flex justify-content-between align-items-center mb-2 shadow-sm border-0">
+            <div>
+              <p class="fw-bold mb-0">${p.title}</p>
+              <small class="text-muted"><i class="fa-solid fa-money-bill-wave me-1"></i>PKR ${Number(p.price).toLocaleString("en-PK")}</small>
+            </div>
+            <span class="badge ${p.status === "pending" ? "badge-pending" : "badge-verified"} active">${p.status}</span>
+          </div>`
+        )
+        .join("")
+      : "<p class='text-muted small italic p-3'>No active listings in your inventory.</p>";
   }
 
   form.addEventListener("submit", (e) => {
@@ -121,10 +124,19 @@
     form.reset();
     renderAreaOptions("", "");
     renderMyListings();
-    alert("Listing submitted. It is now pending admin approval.");
+    alert("Listing submitted successfully! It is now pending admin approval.");
   });
 
-  leadList.innerHTML = window.noshahiData.leads.map((lead) => `<li>${lead}</li>`).join("");
+  leadList.innerHTML = window.noshahiData.leads.map((lead) => `
+    <li class="list-group-item d-flex justify-content-between align-items-center border-0 border-bottom px-0">
+      <div class="ms-2 me-auto">
+        <div class="fw-bold">New Lead: ${lead.split(":")[0]}</div>
+        <small class="text-muted">Inquired about your listing</small>
+      </div>
+      <button class="btn btn-sm btn-outline-primary rounded-pill px-3">Reply</button>
+    </li>
+  `).join("");
+
   renderCityOptions("");
   renderAreaOptions("", "");
   renderMyListings();
