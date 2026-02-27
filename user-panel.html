@@ -1,0 +1,57 @@
+﻿<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Noshahi Property | User Panel</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">Noshahi <span>Property</span></div>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="user-panel.html" class="active">User Panel</a>
+      <a href="agent-dashboard.html">Agent Dashboard</a>
+      <a href="admin-panel.html">Admin Panel</a>
+    </nav>
+  </header>
+
+  <main class="container two-col">
+    <section class="panel">
+      <h2>User Roles</h2>
+      <div class="role-tabs">
+        <button data-role="Buyer" class="active">Buyer</button>
+        <button data-role="Seller">Seller</button>
+        <button data-role="Agent">Agent</button>
+      </div>
+      <div id="roleInfo"></div>
+    </section>
+
+    <section class="panel">
+      <h2>Saved Properties</h2>
+      <div id="savedList" class="stack"></div>
+    </section>
+
+    <section class="panel">
+      <h2>Lead Alerts</h2>
+      <ul id="alerts" class="list"></ul>
+    </section>
+
+    <section class="panel">
+      <h2>Quick Actions</h2>
+      <div class="stack">
+        <button class="btn-primary">Post Property</button>
+        <button class="btn-secondary">Contact Verified Agent</button>
+        <button class="btn-secondary">Create City Alert</button>
+      </div>
+    </section>
+  </main>
+
+  <script src="js/data.js"></script>
+  <script src="js/user-panel.js"></script>
+</body>
+</html>

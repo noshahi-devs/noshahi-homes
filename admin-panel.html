@@ -1,0 +1,59 @@
+﻿<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Noshahi Property | Admin Panel</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">Noshahi <span>Property</span></div>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="user-panel.html">User Panel</a>
+      <a href="agent-dashboard.html">Agent Dashboard</a>
+      <a href="admin-panel.html" class="active">Admin Panel</a>
+    </nav>
+  </header>
+
+  <main class="container">
+    <section class="panel">
+      <h2>Dashboard KPIs</h2>
+      <div class="stats-row">
+        <div class="stat"><p>Active Listings</p><strong id="kpiListings"></strong></div>
+        <div class="stat"><p>Verified Agents</p><strong>74</strong></div>
+        <div class="stat"><p>Monthly Leads</p><strong>1,382</strong></div>
+        <div class="stat"><p>Revenue (PKR)</p><strong>4.2M</strong></div>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2>Pending Listing Approvals</h2>
+      <div id="pendingTable" class="stack"></div>
+    </section>
+
+    <section class="panel two-col-mini">
+      <div>
+        <h2>Manage Locations</h2>
+        <div id="locations" class="mini-grid"></div>
+      </div>
+      <div>
+        <h2>Content Controls</h2>
+        <ul class="list">
+          <li>Homepage banners</li>
+          <li>Subscription plans</li>
+          <li>Blog posts</li>
+          <li>Fraud reports queue</li>
+        </ul>
+      </div>
+    </section>
+  </main>
+
+  <script src="js/data.js"></script>
+  <script src="js/admin.js"></script>
+</body>
+</html>
