@@ -9,128 +9,212 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
     <style>
-        .auth-card {
-            max-width: 450px;
-            margin: 100px auto;
-            border-radius: 24px;
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
             overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f0f4f8;
+        }
+
+        .auth-card {
+            width: 100%;
+            max-width: 520px;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.12);
+            background: #fff;
+        }
+
+        .auth-header {
+            padding: 14px 20px;
+            background: var(--primary, #1a5cff);
+            text-align: center;
+        }
+
+        .auth-header a {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #fff;
+            text-decoration: none;
+        }
+
+        .auth-header p {
+            font-size: 0.85rem;
+            opacity: 0.95;
+            margin: 4px 0 0;
+            color: #fff;
+            letter-spacing: 0.5px;
         }
 
         .auth-tabs .nav-link {
             border: none;
-            padding: 1rem;
+            padding: 8px 12px;
             font-weight: 600;
+            font-size: 0.85rem;
             color: #666;
         }
 
         .auth-tabs .nav-link.active {
-            color: var(--primary);
+            color: var(--primary, #1a5cff);
             background: none;
-            border-bottom: 3px solid var(--primary);
+            border-bottom: 3px solid var(--primary, #1a5cff);
             border-radius: 0;
+        }
+
+        .tab-content {
+            padding: 16px 24px 18px;
+            overflow: hidden;
+        }
+
+        .form-label {
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-bottom: 3px;
+        }
+
+        .form-control,
+        .form-select {
+            font-size: 0.82rem;
+            padding: 5px 10px;
+            height: 32px;
+        }
+
+        .mb-2-custom {
+            margin-bottom: 8px;
+        }
+
+        .btn-auth {
+            padding: 7px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            border-radius: 50px;
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        .admin-hint {
+            font-size: 0.7rem;
+            text-align: center;
+            color: #aaa;
+            margin-top: 6px;
+            margin-bottom: 0;
+        }
+
+        .row.g-2>* {
+            padding-left: 6px;
+            padding-right: 6px;
+        }
+
+        .row.g-2 {
+            margin-left: -6px;
+            margin-right: -6px;
+            row-gap: 8px;
         }
     </style>
 </head>
 
-<body class="bg-light">
-    <div class="container">
-        <div class="auth-card bg-white shadow-lg border-0">
-            <div class="p-4 text-center bg-primary text-white">
-                <a class="navbar-brand brand text-white h3 mb-0" href="index.html">NOSHAHI <span>HOMES</span></a>
-                <p class="small mb-0 opacity-75 mt-2">Professional Property Network</p>
+<body>
+    <div class="auth-card">
+        <!-- Header -->
+        <div class="auth-header">
+            <a href="index.html">NOSHAHI <span>HOMES</span></a>
+            <p>Professional Property Network</p>
+        </div>
+
+        <!-- Tabs -->
+        <nav>
+            <div class="nav nav-tabs auth-tabs w-100" id="auth-tab" role="tablist">
+                <button class="nav-link active w-50" id="login-tab" data-bs-toggle="tab" data-bs-target="#login-pane"
+                    type="button" role="tab">Login</button>
+                <button class="nav-link w-50" id="register-tab" data-bs-toggle="tab" data-bs-target="#register-pane"
+                    type="button" role="tab">Register Agent</button>
+            </div>
+        </nav>
+
+        <!-- Tab Content -->
+        <div class="tab-content" id="auth-tabContent">
+
+            <!-- Login Pane -->
+            <div class="tab-pane fade show active" id="login-pane" role="tabpanel">
+                <form id="loginForm">
+                    <div class="mb-2-custom">
+                        <label class="form-label">Email Address</label>
+                        <input type="email" id="loginEmail" class="form-control" required
+                            placeholder="name@example.com">
+                    </div>
+                    <div class="mb-2-custom">
+                        <label class="form-label">Password</label>
+                        <input type="password" id="loginPass" class="form-control" required placeholder="••••••••">
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-auth">Sign In</button>
+                    <p class="admin-hint">Admin: <strong>admin@noshahi.pk</strong> / <strong>admin123</strong></p>
+                </form>
             </div>
 
-            <nav>
-                <div class="nav nav-tabs auth-tabs w-100" id="auth-tab" role="tablist">
-                    <button class="nav-link active w-50" id="login-tab" data-bs-toggle="tab"
-                        data-bs-target="#login-pane" type="button" role="tab">Login</button>
-                    <button class="nav-link w-50" id="register-tab" data-bs-toggle="tab" data-bs-target="#register-pane"
-                        type="button" role="tab">Register Agent</button>
-                </div>
-            </nav>
-
-            <div class="tab-content p-5" id="auth-tabContent">
-                <!-- Login Pane -->
-                <div class="tab-pane fade show active" id="login-pane" role="tabpanel">
-                    <form id="loginForm">
-                        <div class="mb-3">
-                            <label class="form-label small fw-bold">Email Address</label>
-                            <input type="email" id="loginEmail" class="form-control py-2" required
-                                placeholder="name@example.com">
+            <!-- Register Pane -->
+            <div class="tab-pane fade" id="register-pane" role="tabpanel">
+                <form id="registerForm">
+                    <div class="row g-2">
+                        <div class="col-6">
+                            <label class="form-label">Full Name</label>
+                            <input type="text" id="regName" class="form-control" required placeholder="John Doe">
                         </div>
-                        <div class="mb-4">
-                            <label class="form-label small fw-bold">Password</label>
-                            <input type="password" id="loginPass" class="form-control py-2" required
-                                placeholder="••••••••">
+                        <div class="col-6">
+                            <label class="form-label">Email</label>
+                            <input type="email" id="regEmail" class="form-control" required
+                                placeholder="john@agent.com">
                         </div>
-                        <button type="submit" class="btn btn-primary w-100 py-3 fw-bold rounded-pill">Sign In</button>
-                        <p class="text-center mt-4 small text-muted">For Admin: <span
-                                class="fw-bold">admin@noshahi.pk</span> / <span class="fw-bold">admin123</span></p>
-                    </form>
-                </div>
-
-                <!-- Register Pane -->
-                <div class="tab-pane fade" id="register-pane" role="tabpanel">
-                    <form id="registerForm">
-                        <div class="row g-3 mb-3">
-                            <div class="col-md-6">
-                                <label class="form-label small fw-bold">Full Name</label>
-                                <input type="text" id="regName" class="form-control" required placeholder="John Doe">
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label small fw-bold">Email Address</label>
-                                <input type="email" id="regEmail" class="form-control" required
-                                    placeholder="john@agent.com">
-                            </div>
+                        <div class="col-6">
+                            <label class="form-label">Phone</label>
+                            <input type="tel" id="regPhone" class="form-control" required placeholder="03001234567">
                         </div>
-                        <div class="row g-3 mb-3">
-                            <div class="col-md-6">
-                                <label class="form-label small fw-bold">Phone Number</label>
-                                <input type="tel" id="regPhone" class="form-control" required placeholder="03001234567">
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label small fw-bold">City</label>
-                                <select id="regCity" class="form-select" required>
-                                    <option value="">Select City</option>
-                                    <option>Lahore</option>
-                                    <option>Karachi</option>
-                                    <option>Islamabad</option>
-                                    <option>Faisalabad</option>
-                                    <option>Multan</option>
-                                </select>
-                            </div>
+                        <div class="col-6">
+                            <label class="form-label">City</label>
+                            <select id="regCity" class="form-select" required>
+                                <option value="">Select City</option>
+                                <option>Lahore</option>
+                                <option>Karachi</option>
+                                <option>Islamabad</option>
+                                <option>Faisalabad</option>
+                                <option>Multan</option>
+                            </select>
                         </div>
-                        <div class="mb-3">
-                            <label class="form-label small fw-bold">Agency Name</label>
+                        <div class="col-12">
+                            <label class="form-label">Agency Name</label>
                             <input type="text" id="regAgency" class="form-control" required placeholder="Royal Estate">
                         </div>
-                        <div class="row g-3 mb-3">
-                            <div class="col-md-6">
-                                <label class="form-label small fw-bold">Experience (Years)</label>
-                                <input type="number" id="regExp" class="form-control" required placeholder="5">
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label small fw-bold">Specialty</label>
-                                <select id="regSpecialty" class="form-select" required>
-                                    <option value="">Select Specialty</option>
-                                    <option>Residential</option>
-                                    <option>Commercial</option>
-                                    <option>Industrial</option>
-                                    <option>Agricultural</option>
-                                </select>
-                            </div>
+                        <div class="col-6">
+                            <label class="form-label">Experience (Years)</label>
+                            <input type="number" id="regExp" class="form-control" required placeholder="5">
                         </div>
-                        <div class="mb-4">
-                            <label class="form-label small fw-bold">Password</label>
+                        <div class="col-6">
+                            <label class="form-label">Specialty</label>
+                            <select id="regSpecialty" class="form-select" required>
+                                <option value="">Select</option>
+                                <option>Residential</option>
+                                <option>Commercial</option>
+                                <option>Industrial</option>
+                                <option>Agricultural</option>
+                            </select>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label">Password</label>
                             <input type="password" id="regPass" class="form-control" required placeholder="••••••••">
                         </div>
-                        <button type="submit" class="btn btn-primary w-100 py-3 fw-bold rounded-pill">Create
-                            Account</button>
-                    </form>
-                </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-auth">Create Account</button>
+                </form>
             </div>
+
         </div>
     </div>
+
 
     <script src="js/data.js"></script>
     <script>

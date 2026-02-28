@@ -207,6 +207,8 @@
         if (p) {
           document.getElementById("editId").value = p.id;
           document.getElementById("editTitle").value = p.title;
+          document.getElementById("editCity").value = p.city;
+          document.getElementById("editArea").value = p.area;
           document.getElementById("editPrice").value = p.price;
           document.getElementById("editType").value = p.type;
           currentEditImg = p.image || "";
@@ -271,6 +273,8 @@
     const idx = all.findIndex(x => x.id === id);
     if (idx >= 0) {
       all[idx].title = document.getElementById("editTitle").value.trim();
+      all[idx].city = document.getElementById("editCity").value.trim();
+      all[idx].area = document.getElementById("editArea").value.trim();
       all[idx].price = Number(document.getElementById("editPrice").value);
       all[idx].type = document.getElementById("editType").value;
       all[idx].image = currentEditImg;

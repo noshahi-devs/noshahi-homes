@@ -117,22 +117,43 @@
         <div class="col-md-4">
           <h2 class="h4 mb-4"><i class="fa-solid fa-gears me-2 text-primary"></i>Content Controls</h2>
           <div class="list-group list-group-flush">
-            <a href="#"
+            <button type="button" onclick="openBannersModal()"
               class="list-group-item list-group-item-action py-3 d-flex justify-content-between align-items-center">
-              Homepage Banners <i class="fa-solid fa-chevron-right small text-muted"></i>
-            </a>
-            <a href="#"
+              <span><i class="fa-solid fa-image me-2 text-primary"></i>Homepage Banners</span>
+              <i class="fa-solid fa-chevron-right small text-muted"></i>
+            </button>
+            <button type="button" onclick="openPlansModal()"
               class="list-group-item list-group-item-action py-3 d-flex justify-content-between align-items-center">
-              Subscription Plans <i class="fa-solid fa-chevron-right small text-muted"></i>
-            </a>
-            <a href="#"
+              <span><i class="fa-solid fa-tags me-2 text-primary"></i>Subscription Plans</span>
+              <i class="fa-solid fa-chevron-right small text-muted"></i>
+            </button>
+            <button type="button" onclick="openBlogsModal()"
               class="list-group-item list-group-item-action py-3 d-flex justify-content-between align-items-center">
-              Blog Moderation <i class="fa-solid fa-chevron-right small text-muted"></i>
-            </a>
+              <span><i class="fa-solid fa-pen-nib me-2 text-primary"></i>Blog Moderation</span>
+              <i class="fa-solid fa-chevron-right small text-muted"></i>
+            </button>
           </div>
         </div>
       </div>
     </section>
+
+    <!-- Inbound Requests Button -->
+    <div class="row g-4 mb-5">
+      <div class="col-12">
+        <section class="panel h-100">
+          <div class="d-flex justify-content-between align-items-center">
+            <div>
+              <h2 class="h4 mb-1"><i class="fa-solid fa-envelope-open-text me-2 text-primary"></i>Inbound Requests</h2>
+              <p class="text-muted small mb-0">Buyer inquiries from Upcoming Projects and property requests.</p>
+            </div>
+            <button class="btn btn-primary px-4 fw-bold" onclick="openInboundModal()">
+              <i class="fa-solid fa-inbox me-2"></i>View Requests
+              <span id="adminLeadCount" class="badge bg-white text-primary ms-2 rounded-pill">0</span>
+            </button>
+          </div>
+        </section>
+      </div>
+    </div>
   </main>
 
   <footer class="footer">
@@ -201,6 +222,115 @@
   <script src="js/data.js"></script>
   <script src="js/admin.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+  <!-- ===== Inbound Requests Modal ===== -->
+  <div class="modal fade" id="inboundModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content border-0 shadow-lg">
+        <div class="modal-header bg-primary text-white border-0">
+          <h5 class="modal-title"><i class="fa-solid fa-inbox me-2"></i>Inbound Requests</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body p-4">
+          <div id="adminLeadList" class="stack d-grid gap-2"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== Homepage Banners Modal ===== -->
+  <div class="modal fade" id="bannersModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+      <div class="modal-content border-0 shadow-lg">
+        <div class="modal-header bg-primary text-white border-0">
+          <h5 class="modal-title"><i class="fa-solid fa-image me-2"></i>Homepage Banners</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body p-4">
+          <p class="text-muted small mb-3">Add image URLs to display as hero banners on the homepage. The first active
+            banner is shown.</p>
+          <div class="input-group mb-3">
+            <input type="url" id="bannerUrlInput" class="form-control" placeholder="https://example.com/image.jpg">
+            <button class="btn btn-primary" id="addBannerBtn"><i class="fa-solid fa-plus me-1"></i>Add Banner</button>
+          </div>
+          <div id="bannerList" class="d-grid gap-2"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== Subscription Plans Modal ===== -->
+  <div class="modal fade" id="plansModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+      <div class="modal-content border-0 shadow-lg">
+        <div class="modal-header bg-primary text-white border-0">
+          <h5 class="modal-title"><i class="fa-solid fa-tags me-2"></i>Subscription Plans</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body p-4">
+          <p class="text-muted small mb-3">Manage agent subscription tiers. Click Edit to change pricing or limits.</p>
+          <div class="table-responsive">
+            <table class="table table-bordered align-middle">
+              <thead class="table-light">
+                <tr>
+                  <th>Plan</th>
+                  <th>Price (PKR/mo)</th>
+                  <th>Listings</th>
+                  <th>Leads</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="plansTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== Blog Moderation Modal ===== -->
+  <div class="modal fade" id="blogsModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content border-0 shadow-lg">
+        <div class="modal-header bg-primary text-white border-0">
+          <h5 class="modal-title"><i class="fa-solid fa-pen-nib me-2"></i>Blog Moderation</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body p-4">
+          <div class="row g-4">
+            <div class="col-md-5 border-end">
+              <h6 class="fw-bold mb-3">Write New Post</h6>
+              <div class="mb-2">
+                <label class="form-label small fw-bold">Title</label>
+                <input type="text" id="blogTitle" class="form-control form-control-sm" placeholder="Post title...">
+              </div>
+              <div class="mb-2">
+                <label class="form-label small fw-bold">Category</label>
+                <select id="blogCategory" class="form-select form-select-sm">
+                  <option>Real Estate Tips</option>
+                  <option>Market Trends</option>
+                  <option>Investment Guide</option>
+                  <option>News</option>
+                </select>
+              </div>
+              <div class="mb-3">
+                <label class="form-label small fw-bold">Content</label>
+                <textarea id="blogContent" class="form-control form-control-sm" rows="6"
+                  placeholder="Write your post..."></textarea>
+              </div>
+              <button class="btn btn-primary w-100 fw-bold" id="publishBlogBtn"><i
+                  class="fa-solid fa-paper-plane me-2"></i>Publish Post</button>
+            </div>
+            <div class="col-md-7">
+              <h6 class="fw-bold mb-3">Published Posts</h6>
+              <div id="blogPostsList" class="d-grid gap-2"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
 </body>
 
 </html>

@@ -162,7 +162,251 @@
 
   locations.innerHTML = window.noshahiData.cities.map((c) => `<div class="city-card">${c}</div>`).join("");
 
+  function renderAdminLeads() {
+    const list = document.getElementById("adminLeadList");
+    const count = document.getElementById("adminLeadCount");
+    if (!list) return;
+
+    const leads = window.noshahiStore.getLeads().filter(l => l.agentEmail === "admin@noshahi.pk");
+    count.textContent = leads.length;
+
+    if (!leads.length) {
+      list.innerHTML = `
+        <div class="p-5 text-center text-muted border border-dashed rounded-4 bg-light">
+          <i class="fa-solid fa-inbox fa-3x mb-3 opacity-25"></i>
+          <p>No inquiries received yet.</p>
+        </div>`;
+      return;
+    }
+
+    list.innerHTML = leads.map(l => `
+      <div class="p-3 bg-white border rounded-3 mb-2 shadow-sm">
+        <div class="d-flex justify-content-between align-items-start mb-2">
+          <div>
+            <h6 class="fw-bold mb-0">${l.name}</h6>
+            <small class="text-muted"><i class="fa-solid fa-house-user me-1"></i>${l.propertyTitle} (Upcoming Project)</small>
+          </div>
+          <span class="badge ${l.status === 'new' ? 'bg-primary' : 'bg-success-subtle text-success border-0'} rounded-pill">
+            ${l.status === 'new' ? 'New Inquiry' : 'Contacted'}
+          </span>
+        </div>
+        <p class="small text-dark mb-3 border-start ps-2 py-1 bg-light">${l.message}</p>
+        <div class="d-flex gap-2">
+          ${l.status === 'new' ?
+        `<button class="btn btn-sm btn-primary flex-grow-1 respond-lead" data-id="${l.id}">Mark Contacted</button>` :
+        `<button class="btn btn-sm btn-light border flex-grow-1" disabled><i class="fa-solid fa-check me-1"></i>Contacted</button>`
+      }
+          <a href="tel:${l.phone || '03001234567'}" class="btn btn-sm btn-outline-secondary"><i class="fa-solid fa-phone"></i></a>
+        </div>
+      </div>
+    `).join("");
+
+    list.querySelectorAll(".respond-lead").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const id = Number(btn.dataset.id);
+        const allLeads = window.noshahiStore.getLeads();
+        const lead = allLeads.find(l => l.id === id);
+        if (lead) {
+          const reply = prompt(`Reply to ${lead.name}:`, `Hi ${lead.name}, thank you for your inquiry about ${lead.propertyTitle}. We will send you the project brochure shortly!`);
+          if (reply) {
+            lead.status = 'responded';
+            lead.replyMessage = reply;
+            window.noshahiStore.updateLead(lead);
+            window.noshahiAlert("Status Updated", "Reply sent and lead marked as contacted.", "success");
+            renderAdminLeads();
+          }
+        }
+      });
+    });
+  }
+
   renderPending();
   renderApprovedAgents();
   renderStats();
+  renderAdminLeads();
 })();
+
+// Opens the Inbound Requests modal
+function openInboundModal() {
+  new bootstrap.Modal(document.getElementById('inboundModal')).show();
+}
+
+// ============================================================
+// CONTENT CONTROLS
+// ============================================================
+
+// ----- HELPERS -----
+function getAdminBanners() {
+  return JSON.parse(localStorage.getItem('noshahi_banners') || '[]');
+}
+function saveAdminBanners(banners) {
+  localStorage.setItem('noshahi_banners', JSON.stringify(banners));
+}
+function getAdminBlogs() {
+  return JSON.parse(localStorage.getItem('noshahi_blogs') || '[]');
+}
+function saveAdminBlogs(blogs) {
+  localStorage.setItem('noshahi_blogs', JSON.stringify(blogs));
+}
+function getAdminPlans() {
+  const defaults = [
+    { name: 'Basic', price: 0, listings: 3, leads: 10 },
+    { name: 'Pro', price: 4999, listings: 20, leads: 100 },
+    { name: 'Enterprise', price: 14999, listings: 999, leads: 9999 },
+  ];
+  return JSON.parse(localStorage.getItem('noshahi_plans') || JSON.stringify(defaults));
+}
+function saveAdminPlans(plans) {
+  localStorage.setItem('noshahi_plans', JSON.stringify(plans));
+}
+
+// ----- HOMEPAGE BANNERS -----
+function openBannersModal() {
+  new bootstrap.Modal(document.getElementById('bannersModal')).show();
+  renderBanners();
+
+  document.getElementById('addBannerBtn').onclick = () => {
+    const url = document.getElementById('bannerUrlInput').value.trim();
+    if (!url) return;
+    const banners = getAdminBanners();
+    banners.push({ url, active: true, id: Date.now() });
+    saveAdminBanners(banners);
+    document.getElementById('bannerUrlInput').value = '';
+    renderBanners();
+    window.noshahiAlert('Banner Added', 'New banner saved. It will appear on the homepage.', 'success');
+  };
+}
+
+function renderBanners() {
+  const list = document.getElementById('bannerList');
+  const banners = getAdminBanners();
+  if (!banners.length) {
+    list.innerHTML = '<p class="text-muted text-center small py-3">No banners added yet.</p>';
+    return;
+  }
+  list.innerHTML = banners.map(b => `
+    <div class="d-flex align-items-center gap-3 p-2 border rounded-3 bg-light">
+      <img src="${b.url}" alt="banner" style="width:80px;height:50px;object-fit:cover;border-radius:6px;"
+        onerror="this.src='https://placehold.co/80x50?text=Error'">
+      <div class="flex-grow-1 text-truncate small text-muted">${b.url}</div>
+      <div class="form-check form-switch mb-0">
+        <input class="form-check-input banner-toggle" type="checkbox" data-id="${b.id}" ${b.active ? 'checked' : ''}>
+      </div>
+      <button class="btn btn-sm btn-outline-danger del-banner" data-id="${b.id}"><i class="fa-solid fa-trash"></i></button>
+    </div>
+  `).join('');
+
+  list.querySelectorAll('.banner-toggle').forEach(el => {
+    el.addEventListener('change', () => {
+      const banners = getAdminBanners();
+      const b = banners.find(x => x.id == el.dataset.id);
+      if (b) { b.active = el.checked; saveAdminBanners(banners); }
+    });
+  });
+
+  list.querySelectorAll('.del-banner').forEach(btn => {
+    btn.addEventListener('click', () => {
+      let banners = getAdminBanners();
+      banners = banners.filter(x => x.id != btn.dataset.id);
+      saveAdminBanners(banners);
+      renderBanners();
+    });
+  });
+}
+
+// ----- SUBSCRIPTION PLANS -----
+function openPlansModal() {
+  new bootstrap.Modal(document.getElementById('plansModal')).show();
+  renderPlans();
+}
+
+function renderPlans() {
+  const plans = getAdminPlans();
+  const tbody = document.getElementById('plansTableBody');
+  tbody.innerHTML = plans.map((p, i) => `
+    <tr>
+      <td><strong>${p.name}</strong></td>
+      <td id="price_${i}">${p.price.toLocaleString()}</td>
+      <td id="listings_${i}">${p.listings === 999 ? 'Unlimited' : p.listings}</td>
+      <td id="leads_${i}">${p.leads === 9999 ? 'Unlimited' : p.leads}</td>
+      <td>
+        <button class="btn btn-sm btn-outline-primary edit-plan" data-i="${i}">
+          <i class="fa-solid fa-pen me-1"></i>Edit
+        </button>
+      </td>
+    </tr>
+  `).join('');
+
+  tbody.querySelectorAll('.edit-plan').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const i = Number(btn.dataset.i);
+      const plans = getAdminPlans();
+      const p = plans[i];
+      const newPrice = prompt(`New price for "${p.name}" plan (PKR/month):`, p.price);
+      const newListings = prompt(`Max listings for "${p.name}" plan:`, p.listings);
+      const newLeads = prompt(`Max leads for "${p.name}" plan:`, p.leads);
+      if (newPrice !== null) {
+        p.price = Number(newPrice) || p.price;
+        p.listings = Number(newListings) || p.listings;
+        p.leads = Number(newLeads) || p.leads;
+        saveAdminPlans(plans);
+        renderPlans();
+        window.noshahiAlert('Plan Updated', `${p.name} plan saved.`, 'success');
+      }
+    });
+  });
+}
+
+// ----- BLOG MODERATION -----
+function openBlogsModal() {
+  new bootstrap.Modal(document.getElementById('blogsModal')).show();
+  renderBlogPosts();
+
+  document.getElementById('publishBlogBtn').onclick = () => {
+    const title = document.getElementById('blogTitle').value.trim();
+    const category = document.getElementById('blogCategory').value;
+    const content = document.getElementById('blogContent').value.trim();
+    if (!title || !content) {
+      window.noshahiAlert('Missing Fields', 'Please enter a title and content.', 'warning');
+      return;
+    }
+    const blogs = getAdminBlogs();
+    blogs.unshift({ id: Date.now(), title, category, content, date: new Date().toLocaleDateString('en-PK') });
+    saveAdminBlogs(blogs);
+    document.getElementById('blogTitle').value = '';
+    document.getElementById('blogContent').value = '';
+    renderBlogPosts();
+    window.noshahiAlert('Published!', `"${title}" is now live.`, 'success');
+  };
+}
+
+function renderBlogPosts() {
+  const list = document.getElementById('blogPostsList');
+  const blogs = getAdminBlogs();
+  if (!blogs.length) {
+    list.innerHTML = '<p class="text-muted text-center small py-3">No posts published yet.</p>';
+    return;
+  }
+  list.innerHTML = blogs.map(b => `
+    <div class="p-3 border rounded-3 bg-light">
+      <div class="d-flex justify-content-between align-items-start">
+        <div>
+          <span class="badge bg-primary-subtle text-primary border-0 mb-1">${b.category}</span>
+          <h6 class="fw-bold mb-0">${b.title}</h6>
+          <small class="text-muted">${b.date}</small>
+        </div>
+        <button class="btn btn-sm btn-outline-danger del-blog" data-id="${b.id}"><i class="fa-solid fa-trash"></i></button>
+      </div>
+      <p class="small text-muted mt-2 mb-0 text-truncate">${b.content}</p>
+    </div>
+  `).join('');
+
+  list.querySelectorAll('.del-blog').forEach(btn => {
+    btn.addEventListener('click', () => {
+      let blogs = getAdminBlogs();
+      blogs = blogs.filter(x => x.id != btn.dataset.id);
+      saveAdminBlogs(blogs);
+      renderBlogPosts();
+    });
+  });
+}
