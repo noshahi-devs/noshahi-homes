@@ -272,9 +272,13 @@
       blogGrid.innerHTML = data.blogs
         .map((b) => `<article class="card">
           <div class="content">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <span class="badge bg-primary-subtle text-primary border-0">${b.category || "Insights"}</span>
+              <small class="text-muted">${b.date || ""}${b.readTime ? ` · ${b.readTime}` : ""}</small>
+            </div>
             <h3 class="h5 mb-2">${b.title}</h3>
             <p class="text-muted small mb-0"><i class="fa-solid fa-user-pen me-2"></i>${b.author}</p>
-            <a href="#" class="btn btn-link px-0 text-primary fw-bold mt-2 text-decoration-none">Read Full Insight <i class="fa-solid fa-arrow-right ms-1"></i></a>
+            <a href="blog.html?id=${encodeURIComponent(b.id)}" class="btn btn-link px-0 text-primary fw-bold mt-2 text-decoration-none">Read Full Insight <i class="fa-solid fa-arrow-right ms-1"></i></a>
           </div>
         </article>`)
         .join("");
@@ -304,7 +308,7 @@
     const areaQuery = normalize(f.area);
     const filtered = store
       .allListings()
-      .filter((p) => p.status === "approved") // Homepage usually shows only approved
+       .filter((p) => p.status === "approved") // Homepage usually shows only approved
       .filter((p) => !f.city || p.city === f.city)
       .filter((p) => {
         if (!areaQuery) return true;
@@ -326,3 +330,7 @@
   renderListings(store.allListings().filter((p) => p.status === "approved"));
   renderStatic();
 })();
+
+
+
+

@@ -1,8 +1,6 @@
 ﻿(function () {
   const pendingTable = document.getElementById("pendingTable");
-  if (!pendingTable) return;
-
-  const kpiListings = document.getElementById("kpiListings");
+    const kpiListings = document.getElementById("kpiListings");
   const locations = document.getElementById("locations");
 
   function setStatus(id, status) {
@@ -17,6 +15,7 @@
   }
 
   function renderPending() {
+    if (!pendingTable) return;
     const listings = window.noshahiStore.getCustomListings().filter((p) => p.status === "pending");
     const agents = window.noshahiStore.getUsers().filter((u) => u.role === "agent" && u.status === "pending");
 
@@ -97,8 +96,8 @@
           user.status = 'approved';
           window.noshahiStore.updateUser(user);
           window.noshahiAlert("Agent Verified", `${user.name} can now list properties.`, "success");
-          renderPending();
-          renderApprovedAgents();
+          if (pendingTable) renderPending();
+  renderApprovedAgents();
         }
       });
     });
@@ -156,11 +155,14 @@
   }
 
   function renderStats() {
+    if (!kpiListings) return;
     const total = window.noshahiStore.allListings().filter((x) => x.status !== "rejected").length;
     kpiListings.textContent = total;
   }
 
-  locations.innerHTML = window.noshahiData.cities.map((c) => `<div class="city-card">${c}</div>`).join("");
+  if (locations) {
+    locations.innerHTML = window.noshahiData.cities.map((c) => `<div class="city-card">${c}</div>`).join("");
+  }
 
   function renderAdminLeads() {
     const list = document.getElementById("adminLeadList");
@@ -168,7 +170,7 @@
     if (!list) return;
 
     const leads = window.noshahiStore.getLeads().filter(l => l.agentEmail === "admin@noshahi.pk");
-    count.textContent = leads.length;
+    if (count) count.textContent = leads.length;
 
     if (!leads.length) {
       list.innerHTML = `
@@ -220,7 +222,7 @@
     });
   }
 
-  renderPending();
+  if (pendingTable) renderPending();
   renderApprovedAgents();
   renderStats();
   renderAdminLeads();
@@ -228,7 +230,12 @@
 
 // Opens the Inbound Requests modal
 function openInboundModal() {
-  new bootstrap.Modal(document.getElementById('inboundModal')).show();
+  const modalEl = document.getElementById('inboundModal');
+  if (!modalEl) {
+    window.location.href = 'admin-inbound.html';
+    return;
+  }
+  new bootstrap.Modal(modalEl).show();
 }
 
 // ============================================================
@@ -262,10 +269,18 @@ function saveAdminPlans(plans) {
 
 // ----- HOMEPAGE BANNERS -----
 function openBannersModal() {
-  new bootstrap.Modal(document.getElementById('bannersModal')).show();
+  const modalEl = document.getElementById('bannersModal');
+  if (!modalEl) {
+    window.location.href = 'admin-content.html';
+    return;
+  }
+  new bootstrap.Modal(modalEl).show();
   renderBanners();
 
-  document.getElementById('addBannerBtn').onclick = () => {
+  const addBtn = document.getElementById('addBannerBtn');
+  if (!addBtn) return;
+
+  addBtn.onclick = () => {
     const url = document.getElementById('bannerUrlInput').value.trim();
     if (!url) return;
     const banners = getAdminBanners();
@@ -279,6 +294,7 @@ function openBannersModal() {
 
 function renderBanners() {
   const list = document.getElementById('bannerList');
+  if (!list) return;
   const banners = getAdminBanners();
   if (!banners.length) {
     list.innerHTML = '<p class="text-muted text-center small py-3">No banners added yet.</p>';
@@ -316,13 +332,19 @@ function renderBanners() {
 
 // ----- SUBSCRIPTION PLANS -----
 function openPlansModal() {
-  new bootstrap.Modal(document.getElementById('plansModal')).show();
+  const modalEl = document.getElementById('plansModal');
+  if (!modalEl) {
+    window.location.href = 'admin-content.html';
+    return;
+  }
+  new bootstrap.Modal(modalEl).show();
   renderPlans();
 }
 
 function renderPlans() {
   const plans = getAdminPlans();
   const tbody = document.getElementById('plansTableBody');
+  if (!tbody) return;
   tbody.innerHTML = plans.map((p, i) => `
     <tr>
       <td><strong>${p.name}</strong></td>
@@ -359,10 +381,18 @@ function renderPlans() {
 
 // ----- BLOG MODERATION -----
 function openBlogsModal() {
-  new bootstrap.Modal(document.getElementById('blogsModal')).show();
+  const modalEl = document.getElementById('blogsModal');
+  if (!modalEl) {
+    window.location.href = 'admin-content.html';
+    return;
+  }
+  new bootstrap.Modal(modalEl).show();
   renderBlogPosts();
 
-  document.getElementById('publishBlogBtn').onclick = () => {
+  const publishBtn = document.getElementById('publishBlogBtn');
+  if (!publishBtn) return;
+
+  publishBtn.onclick = () => {
     const title = document.getElementById('blogTitle').value.trim();
     const category = document.getElementById('blogCategory').value;
     const content = document.getElementById('blogContent').value.trim();
@@ -382,6 +412,7 @@ function openBlogsModal() {
 
 function renderBlogPosts() {
   const list = document.getElementById('blogPostsList');
+  if (!list) return;
   const blogs = getAdminBlogs();
   if (!blogs.length) {
     list.innerHTML = '<p class="text-muted text-center small py-3">No posts published yet.</p>';
@@ -410,3 +441,5 @@ function renderBlogPosts() {
     });
   });
 }
+
+

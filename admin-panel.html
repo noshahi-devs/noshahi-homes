@@ -44,8 +44,32 @@
     </nav>
   </header>
 
-  <main class="container">
-    <section class="panel bg-primary text-white border-0 mb-5">
+  <main class="container admin-main">
+    <div class="row g-4">
+      <aside class="col-lg-3">
+        <section class="panel admin-sidebar">
+          <h2 class="h5 mb-3"><i class="fa-solid fa-sliders me-2 text-primary"></i>Admin Navigation</h2>
+          <div class="list-group list-group-flush admin-sidebar-links">
+            <a href="admin-panel.html" class="list-group-item list-group-item-action py-2">Overview</a>
+            <a href="admin-approvals.html" class="list-group-item list-group-item-action py-2">Pending Approvals</a>
+            <a href="admin-partners.html" class="list-group-item list-group-item-action py-2">Verified Partners</a>
+            <a href="admin-content.html" class="list-group-item list-group-item-action py-2">Content Controls</a>
+            <a href="admin-inbound.html" class="list-group-item list-group-item-action py-2">Inbound Requests</a>
+          </div>
+          <hr>
+          <div class="d-grid gap-2">
+            <button class="btn btn-primary btn-sm" onclick="openInboundModal()">
+              <i class="fa-solid fa-inbox me-2"></i>Open Inbound
+            </button>
+            <button class="btn btn-outline-primary btn-sm" onclick="openBannersModal()">
+              <i class="fa-solid fa-image me-2"></i>Manage Banners
+            </button>
+          </div>
+        </section>
+      </aside>
+
+      <div class="col-lg-9">
+        <section id="overviewSection" class="panel bg-primary text-white border-0 mb-5">
       <div class="row align-items-center">
         <div class="col-md-6">
           <h1 class="text-white mb-2">Command Center</h1>
@@ -69,87 +93,43 @@
           </div>
         </div>
       </div>
-    </section>
-
-    <div class="row g-4 mb-5">
-      <div class="col-lg-8">
-        <section class="panel h-100">
-          <h2 class="h4 mb-4"><i class="fa-solid fa-clipboard-check me-2 text-primary"></i>Pending Approvals</h2>
-          <div id="pendingTable" class="stack d-grid gap-3"></div>
         </section>
-      </div>
-      <div class="col-lg-4">
-        <section class="panel h-100">
-          <h2 class="h4 mb-4"><i class="fa-solid fa-chart-pie me-2 text-primary"></i>Platform Health</h2>
-          <div class="d-grid gap-3">
-            <div class="stat-card border-0 bg-light p-3">
-              <p class="text-muted small mb-1">Verified Agents</p>
-              <strong class="h4 mb-0">74</strong>
-            </div>
-            <div class="stat-card border-0 bg-light p-3">
-              <p class="text-muted small mb-1">Monthly Leads</p>
-              <strong class="h4 mb-0">1,382</strong>
-            </div>
-            <div class="stat-card border-0 bg-light p-3">
-              <p class="text-muted small mb-1">Fraud Reports</p>
-              <strong class="h4 mb-0 text-danger">3</strong>
-            </div>
-          </div>
-        </section>
-      </div>
-    </div>
 
-    <section class="panel mb-5">
-      <h2 class="h4 mb-4"><i class="fa-solid fa-user-check me-2 text-primary"></i>Verified Partners (Agent Directory)
-      </h2>
-      <div id="agentDirectory" class="row g-3">
-        <!-- Approved agents will be rendered here -->
-      </div>
-    </section>
-
-    <section class="panel">
-      <div class="row g-4">
-        <div class="col-md-8">
-          <h2 class="h4 mb-4"><i class="fa-solid fa-map-location-dot me-2 text-primary"></i>Manage Locations</h2>
-          <div id="locations" class="card-grid" style="grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));">
-          </div>
-        </div>
-        <div class="col-md-4">
-          <h2 class="h4 mb-4"><i class="fa-solid fa-gears me-2 text-primary"></i>Content Controls</h2>
-          <div class="list-group list-group-flush">
-            <button type="button" onclick="openBannersModal()"
-              class="list-group-item list-group-item-action py-3 d-flex justify-content-between align-items-center">
-              <span><i class="fa-solid fa-image me-2 text-primary"></i>Homepage Banners</span>
-              <i class="fa-solid fa-chevron-right small text-muted"></i>
-            </button>
-            <button type="button" onclick="openPlansModal()"
-              class="list-group-item list-group-item-action py-3 d-flex justify-content-between align-items-center">
-              <span><i class="fa-solid fa-tags me-2 text-primary"></i>Subscription Plans</span>
-              <i class="fa-solid fa-chevron-right small text-muted"></i>
-            </button>
-            <button type="button" onclick="openBlogsModal()"
-              class="list-group-item list-group-item-action py-3 d-flex justify-content-between align-items-center">
-              <span><i class="fa-solid fa-pen-nib me-2 text-primary"></i>Blog Moderation</span>
-              <i class="fa-solid fa-chevron-right small text-muted"></i>
-            </button>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Inbound Requests Button -->
-    <div class="row g-4 mb-5">
-      <div class="col-12">
-        <section class="panel h-100">
-          <div class="d-flex justify-content-between align-items-center">
-            <div>
-              <h2 class="h4 mb-1"><i class="fa-solid fa-envelope-open-text me-2 text-primary"></i>Inbound Requests</h2>
-              <p class="text-muted small mb-0">Buyer inquiries from Upcoming Projects and property requests.</p>
+        <section class="panel">
+          <h2 class="h4 mb-4"><i class="fa-solid fa-compass me-2 text-primary"></i>Quick Access</h2>
+          <div class="row g-3">
+            <div class="col-md-6">
+              <a href="admin-approvals.html" class="text-decoration-none">
+                <div class="stat-card h-100">
+                  <p class="text-muted small mb-1">Workflow</p>
+                  <strong class="h5 mb-0">Pending Approvals</strong>
+                </div>
+              </a>
             </div>
-            <button class="btn btn-primary px-4 fw-bold" onclick="openInboundModal()">
-              <i class="fa-solid fa-inbox me-2"></i>View Requests
-              <span id="adminLeadCount" class="badge bg-white text-primary ms-2 rounded-pill">0</span>
-            </button>
+            <div class="col-md-6">
+              <a href="admin-partners.html" class="text-decoration-none">
+                <div class="stat-card h-100">
+                  <p class="text-muted small mb-1">Directory</p>
+                  <strong class="h5 mb-0">Verified Partners</strong>
+                </div>
+              </a>
+            </div>
+            <div class="col-md-6">
+              <a href="admin-content.html" class="text-decoration-none">
+                <div class="stat-card h-100">
+                  <p class="text-muted small mb-1">Publishing</p>
+                  <strong class="h5 mb-0">Content Controls</strong>
+                </div>
+              </a>
+            </div>
+            <div class="col-md-6">
+              <a href="admin-inbound.html" class="text-decoration-none">
+                <div class="stat-card h-100">
+                  <p class="text-muted small mb-1">Inbox</p>
+                  <strong class="h5 mb-0">Inbound Requests</strong>
+                </div>
+              </a>
+            </div>
           </div>
         </section>
       </div>
@@ -334,3 +314,4 @@
 </body>
 
 </html>
+

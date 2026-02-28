@@ -75,15 +75,41 @@
     { id: 6, title: "8 Marla Corner House", city: "Rawalpindi", area: "Bahria Town", type: "House", intent: "Buy", price: 32000000, beds: 4, baths: 4, featured: false, status: "approved" }
   ],
   projects: [
-    { name: "Marina Blue Karachi", city: "Karachi", units: "850+", image: "img/marina-blue.png" },
+    { name: "Marina Blue Karachi", city: "Karachi", units: "850+", image: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" },
     { name: "Noshahi Residencia", city: "Lahore", units: "400+" },
     { name: "Central Heights", city: "Faisalabad", units: "220+" },
-    { name: "South Villas", city: "Multan", units: "180+" }
+    { name: "South Villas", city: "Multan", units: "180+" },
+    { name: "Canal Vista Enclave", city: "Rawalpindi", units: "300+" },
+    { name: "Green Palm Residency", city: "Gujranwala", units: "260+" }
   ],
   blogs: [
-    { title: "How to verify property documents in Pakistan", author: "Team Noshahi" },
-    { title: "Buy vs Rent: 2026 practical guide", author: "Market Desk" },
-    { title: "Top investment zones this year", author: "Research Team" }
+    {
+      id: 1,
+      title: "How to verify property documents in Pakistan",
+      author: "Team Noshahi",
+      category: "Legal Guide",
+      date: "2026-01-12",
+      readTime: "5 min read",
+      content: "Before buying any property, verify ownership records, approved society status, and encumbrance history. Always check official land records, request a complete transfer chain, and match seller CNIC details with ownership documents. For safer transactions, involve a licensed legal advisor and avoid cash-only undocumented payments."
+    },
+    {
+      id: 2,
+      title: "Buy vs Rent: 2026 practical guide",
+      author: "Market Desk",
+      category: "Buyer Guide",
+      date: "2026-01-21",
+      readTime: "4 min read",
+      content: "Buying is stronger for long-term stability and equity building, while renting offers flexibility and lower upfront cost. Compare monthly rent-to-income ratio, expected appreciation, and maintenance burden in your target city. If your stay horizon is short, rent is usually safer; for long-term living, buying can be more efficient."
+    },
+    {
+      id: 3,
+      title: "Top investment zones this year",
+      author: "Research Team",
+      category: "Market Trends",
+      date: "2026-02-05",
+      readTime: "6 min read",
+      content: "Strong investment zones usually combine infrastructure growth, high rental demand, and transparent development approvals. Focus on areas near transit corridors, commercial hubs, and expanding residential clusters. Diversify across city tiers instead of concentrating capital in a single micro-market."
+    }
   ],
   leads: [
     "Ali Raza asked for site visit in DHA Lahore",

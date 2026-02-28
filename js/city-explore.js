@@ -1,4 +1,4 @@
-(function () {
+﻿(function () {
   const data = window.noshahiData;
   const store = window.noshahiStore;
 
@@ -22,6 +22,8 @@
   function init() {
     cityNameHeader.textContent = currentCity;
     document.getElementById("listingTitle").textContent = `Available Properties in ${currentCity}`;
+
+
 
     // Set initial active button
     typeButtons.forEach(btn => {
@@ -148,3 +150,5 @@
 
   init();
 })();
+
+
