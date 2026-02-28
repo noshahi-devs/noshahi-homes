@@ -8,7 +8,7 @@
     "Hafizabad", "Rajanpur", "Jhelum", "Chakwal", "Toba Tek Singh", "Wazirabad",
     "Kamoke", "Arifwala", "Burewala", "Muridke", "Sadiqabad", "Khanpur", "Pattoki",
     "Jaranwala", "Samundri", "Mian Channu", "Shakargarh", "Kot Addu", "Ahmedpur East",
-    "Jalalpur Jattan", "Taxila", "Talagang", "Chishtian"
+    "Jalalpur Jattan", "Taxila", "Talagang", "Chishtian", "Karachi"
   ],
   punjabAreas: {
     "Lahore": ["DHA", "Bahria Town", "Johar Town", "Model Town", "Gulberg", "Wapda Town"],
@@ -75,6 +75,7 @@
     { id: 6, title: "8 Marla Corner House", city: "Rawalpindi", area: "Bahria Town", type: "House", intent: "Buy", price: 32000000, beds: 4, baths: 4, featured: false, status: "approved" }
   ],
   projects: [
+    { name: "Marina Blue Karachi", city: "Karachi", units: "850+", image: "img/marina-blue.png" },
     { name: "Noshahi Residencia", city: "Lahore", units: "400+" },
     { name: "Central Heights", city: "Faisalabad", units: "220+" },
     { name: "South Villas", city: "Multan", units: "180+" }

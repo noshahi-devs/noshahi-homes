@@ -133,6 +133,7 @@
         const reply = prompt(`Reply to ${lead.name}:`, `Hi ${lead.name}, thank you for your inquiry about ${lead.propertyTitle}. When would you like order a visit?`);
         if (reply) {
           lead.status = 'responded';
+          lead.replyMessage = reply; // Save the reply to be shown to the buyer
           noshahi.updateLead(lead);
           window.noshahiAlert("Response Sent", `Your reply has been sent to ${lead.name}.`, "success");
           renderLeads();

@@ -268,7 +268,7 @@ h6 {
 }
 
 .city-card:hover {
-  background-color: var(--primary);
+  background-color: var(--primary) !important;
   color: #fff !important;
   transform: translateY(-5px);
 }
@@ -287,15 +287,15 @@ h6 {
   color: var(--primary);
 }
 
-.city-card:hover .city-quick-types {
-  opacity: 1 !important;
-  transform: translateY(0);
-}
-
 .btn-xs {
-  font-size: 0.65rem;
+  font-size: 0.7rem;
   font-weight: 700;
-  border-radius: 4px;
+  border-radius: 6px;
+  width: 28px;
+  height: 28px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .transition-300 {
@@ -326,6 +326,32 @@ h6 {
   box-shadow: var(--shadow-sm);
   margin-bottom: 2rem;
 }
+
+.btn-close-map {
+  position: absolute;
+  top: 15px;
+  left: 15px;
+  z-index: 10;
+  width: 32px;
+  height: 32px;
+  background: rgba(255, 255, 255, 0.9);
+  border: none;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow-md);
+  color: var(--text-main);
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.btn-close-map:hover {
+  background: #fff;
+  transform: scale(1.1);
+  color: #dc2626;
+}
+
 
 .two-col {
   display: grid;
@@ -370,8 +396,8 @@ h6 {
 
 /* Footer */
 .footer {
-  background: #0f172a;
-  color: #94a3b8;
+  background: var(--primary);
+  color: #e2e8f0;
   padding: 4rem 1.5rem;
   text-align: center;
   margin-top: 4rem;

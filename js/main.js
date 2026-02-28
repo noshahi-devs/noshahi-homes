@@ -18,6 +18,13 @@
   const count = document.getElementById("resultCount");
   const mapSection = document.getElementById("map-section");
   const googleMap = document.getElementById("google-map");
+  const closeMapBtn = document.getElementById("closeMap");
+
+  if (closeMapBtn) {
+    closeMapBtn.addEventListener("click", () => {
+      mapSection.classList.remove("show");
+    });
+  }
 
   const normalize = (v) => String(v || "").trim().toLowerCase();
 
@@ -26,29 +33,7 @@
     return data.cities.find((c) => normalize(c) === wanted) || "";
   }
 
-  function allAreasFromListings() {
-    return [...new Set(store.allListings().map((p) => p.area))].sort();
-  }
-
-  function fillAreaOptions(cityValue) {
-    const cityName = lookupCity(cityValue);
-    let areas = [];
-
-    if (cityName) {
-      // Merge standard areas with areas actually used in listings for this city
-      const standard = data.punjabAreas[cityName] || ["Main City", "Cantt", "Model Town", "Satellite Town"];
-      const fromListings = store.allListings()
-        .filter(p => p.city === cityName && p.status === 'approved')
-        .map(p => p.area);
-
-      areas = [...new Set([...standard, ...fromListings])].filter(Boolean).sort();
-    } else {
-      areas = allAreasFromListings();
-    }
-
-    areaSel.innerHTML = '<option value="">Area</option>';
-    areas.forEach((a) => areaSel.insertAdjacentHTML("beforeend", `<option>${a}</option>`));
-  }
+  // Area is now a text input
 
   function showCitySuggestions(query) {
     const q = normalize(query);
@@ -67,15 +52,11 @@
     if (!item) return;
     cityInput.value = item.dataset.city;
     cityOptions.classList.remove("show");
-    fillAreaOptions(cityInput.value);
     triggerSearch();
   });
 
   // Reactive listeners
-  areaSel.addEventListener("focus", () => {
-    if (cityInput.value) triggerSearch();
-  });
-  areaSel.addEventListener("change", triggerSearch);
+  areaSel.addEventListener("input", triggerSearch);
   typeSel.addEventListener("change", triggerSearch);
   priceInput.addEventListener("input", triggerSearch);
 
@@ -85,11 +66,8 @@
     }
   });
 
-  fillAreaOptions("");
-
   cityInput.addEventListener("input", () => {
     showCitySuggestions(cityInput.value);
-    fillAreaOptions(cityInput.value);
     triggerSearch();
   });
 
@@ -182,7 +160,7 @@
     if (projectsGrid) {
       projectsGrid.innerHTML = data.projects
         .map((p) => `<article class="card">
-          <div class="thumb" style="background-image: url('https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80')"></div>
+          <div class="thumb" style="background-image: url('${p.image || 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80'}')"></div>
           <div class="content">
             <h3 class="h5 mb-1">${p.name}</h3>
             <p class="text-muted small mb-2"><i class="fa-solid fa-location-dot me-1"></i>${p.city}</p>
@@ -194,13 +172,8 @@
 
     if (cityGrid) {
       cityGrid.innerHTML = data.cities.slice(0, 8).map((c) => `
-        <div class="card p-3 text-center shadow-sm hover-up border-0 bg-white clickable city-card" data-city="${c}">
-          <h4 class="h6 mb-2">${c}</h4>
-          <div class="city-quick-types d-flex justify-content-center gap-2 mt-2 opacity-0 transition-300">
-            <button class="btn btn-xs btn-outline-primary py-0 px-2 small quick-filter" data-type="House" title="Houses in ${c}">H</button>
-            <button class="btn btn-xs btn-outline-primary py-0 px-2 small quick-filter" data-type="Plot" title="Plots in ${c}">P</button>
-            <button class="btn btn-xs btn-outline-primary py-0 px-2 small quick-filter" data-type="Commercial" title="Commercial in ${c}">C</button>
-          </div>
+        <div class="card p-4 text-center shadow-sm hover-up border-0 bg-white clickable city-card" data-city="${c}">
+          <h4 class="h5 mb-0">${c}</h4>
         </div>
       `).join("");
 
@@ -252,11 +225,12 @@
 
     updateMap(f.city, f.area);
 
+    const areaQuery = normalize(f.area);
     const filtered = store
       .allListings()
       .filter((p) => p.status === "approved") // Homepage usually shows only approved
       .filter((p) => !f.city || p.city === f.city)
-      .filter((p) => !f.area || p.area === f.area)
+      .filter((p) => !areaQuery || normalize(p.area).includes(areaQuery))
       .filter((p) => !f.type || p.type === f.type)
       .filter((p) => p.price <= f.max);
 

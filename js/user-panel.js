@@ -63,6 +63,23 @@
 
     document.getElementById("btnPurchase").addEventListener("click", () => {
       const actionDiv = document.getElementById("purchaseAction");
+
+      // Get current user (buyer)
+      const currentUser = window.noshahiStore.getCurrentUser() || { name: "Guest User", email: "guest@example.com", phone: "03000000000" };
+
+      // Generate a lead for each item in the cart
+      items.forEach(item => {
+        window.noshahiStore.saveLead({
+          buyerEmail: currentUser.email,
+          agentEmail: item.agentEmail || "admin@noshahi.pk", // Fallback if no agent is set
+          name: currentUser.name,
+          propertyTitle: item.title,
+          propertyId: item.id,
+          phone: currentUser.phone || "03000000000",
+          message: `I am highly interested in purchasing ${item.title} located in ${item.city}, ${item.area}. Please contact me.`
+        });
+      });
+
       actionDiv.innerHTML = `
         <div class="py-3">
           <i class="fa-solid fa-circle-check fa-3x mb-3 text-white"></i>
@@ -87,14 +104,46 @@
   const listings = window.noshahiStore.allListings().slice(0, 4);
   renderCart();
 
-  alerts.innerHTML = window.noshahiData.leads.map((x) => `
-    <div class="list-group-item border-0 px-0 py-3 border-bottom">
-      <div class="d-flex w-100 justify-content-between">
-        <h6 class="mb-1 fw-bold">${x.split(" asked")[0].split(" wants")[0].split(" requested")[0]}</h6>
-        <small class="text-muted">Just now</small>
+  const currentUser = window.noshahiStore.getCurrentUser();
+  const currentEmail = currentUser ? currentUser.email : "guest@example.com";
+
+  // Get leads specifically for this buyer
+  const myLeads = window.noshahiStore.getLeads().filter(l => l.buyerEmail === currentEmail);
+
+  if (myLeads.length === 0) {
+    alerts.innerHTML = `
+      <div class="list-group-item border-0 p-4 text-center text-muted bg-light rounded-3 mt-2">
+        <i class="fa-solid fa-bell-slash fa-2x mb-2 opacity-50"></i>
+        <p class="small mb-0">No recent activity. Inquire about a property to get started!</p>
       </div>
-      <p class="mb-1 text-muted small">${x}</p>
-    </div>
-  `).join("");
+    `;
+  } else {
+    // Sort leads to show newest first
+    myLeads.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+
+    alerts.innerHTML = myLeads.map((x) => `
+      <div class="list-group-item border-0 px-0 py-3 border-bottom">
+        <div class="d-flex w-100 justify-content-between">
+          <h6 class="mb-1 fw-bold text-truncate" style="max-width: 70%;">${x.propertyTitle}</h6>
+          <span class="badge ${x.status === 'responded' ? 'bg-success' : 'bg-secondary'} rounded-pill" style="font-size: 0.65rem;">
+            ${x.status === 'responded' ? 'Reply Received' : 'Pending Response'}
+          </span>
+        </div>
+        <p class="mb-2 text-muted small">You inquired about this property.</p>
+        ${x.status === 'responded' && x.replyMessage ? `
+          <div class="bg-success-subtle p-3 rounded-3 mt-2 border border-success-subtle">
+            <div class="d-flex gap-2">
+              <i class="fa-solid fa-reply text-success mt-1"></i>
+              <div>
+                <span class="d-block small fw-bold text-success mb-1">Agent Reply:</span>
+                <p class="small text-dark mb-0">${x.replyMessage}</p>
+              </div>
+            </div>
+          </div>
+        ` : ''}
+      </div>
+    `).join("");
+  }
+
   renderRole("Buyer");
 })();
